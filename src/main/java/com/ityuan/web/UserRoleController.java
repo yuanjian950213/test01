@@ -240,6 +240,7 @@ public class UserRoleController  {
                 System.out.println("git1");
                 System.out.println("master test1");
                 System.out.println("dev01 test1");
+                System.out.println("push test1");
                 return "nosuccess";
             }
         }
