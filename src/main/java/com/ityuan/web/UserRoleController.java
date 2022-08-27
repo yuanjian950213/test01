@@ -241,6 +241,7 @@ public class UserRoleController  {
                 System.out.println("master test1");
                 System.out.println("dev01 test1");
                 System.out.println("push test1");
+                System.out.println("pull test1");
                 return "nosuccess";
             }
         }
