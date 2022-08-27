@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.EmployeeMapper">
+
+    <resultMap id="employeeMap" type="com.ityuan.pojo.Employee">
+        <result column="id" property="id"/>
+        <result column="t_emp_no" property="empNo"/>
+        <result column="t_emp_name" property="empName"/>
+        <result column="t_emp_dept" property="empDept"/>
+        <result column="t_sex" property="sex"/>
+        <result column="t_education" property="education"/>
+        <result column="t_email" property="email"/>
+        <result column="t_phone" property="phone"/>
+        <result column="t_entry_time" property="entryTime"/>
+        <result column="t_create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="findAllEmployee" resultMap="employeeMap">
+        select * from t_employee
+    </select>
+
+    <insert id="addNewempLoyee" parameterType="com.ityuan.pojo.Employee">
+        insert into t_empLoyee(t_emp_no,t_emp_name,t_sex,t_emp_dept,t_entry_time,t_create_time)
+        values (#{empNo},#{empName},#{sex},#{empDept},#{entryTime},#{createTime})
+    </insert>
+
+    <select id="findOneEmployee" resultMap="employeeMap" parameterType="String">
+        select * from t_employee
+        <where>
+            <if test="empName != ''">
+                and t_emp_name like '%${empName}%'
+            </if>
+            <if test="empDept != '' and empDept != '请选择部门'">
+                and t_emp_dept = #{empDept}
+            </if>
+        </where>
+    </select>
+
+    <delete id="delemployee" parameterType="integer">
+        delete from t_employee where t_emp_no = #{obj}
+    </delete>
+
+    <select id="findNewOne" resultMap="employeeMap" parameterType="String">
+        select * from t_employee where t_emp_no = #{empNo}
+    </select>
+
+</mapper>

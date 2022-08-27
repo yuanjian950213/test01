@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.RoleMapper">
+
+    <resultMap id="roleMap" type="com.ityuan.pojo.Role">
+        <id column="id" property="id"/>
+        <result column="t_role_name" property="t_role_name"/>
+        <result column="t_create_time" property="t_create_time"/>
+    </resultMap>
+
+    <resultMap id="userMap" type="com.ityuan.pojo.User">
+
+    </resultMap>
+
+    <select id="findAll" resultMap="roleMap">
+        select * from t_role
+    </select>
+
+    <select id="findUser" resultMap="userMap" parameterType="String">
+        select * from t_user where t_role_id = #{roleId}
+    </select>
+
+    <delete id="del" parameterType="String">
+        delete from t_role where id = #{roleId}
+    </delete>
+
+    <insert id="add" parameterType="com.ityuan.pojo.Role">
+        insert into t_role(t_role_name,t_create_time)
+        values (#{t_role_name},#{t_create_time})
+    </insert>
+
+    <select id="findRole" resultType="com.ityuan.pojo.Role" parameterType="int">
+        select * from t_role where id = #{roleId}
+    </select>
+
+    <update id="change" parameterType="com.ityuan.pojo.Role">
+        update t_role
+           set t_role_name = #{t_role_name}
+         where id = #{id}
+    </update>
+</mapper>

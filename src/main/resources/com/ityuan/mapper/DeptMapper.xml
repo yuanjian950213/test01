@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.DeptMapper">
+
+    <resultMap id="deptMap" type="com.ityuan.pojo.Dept">
+        <result column="t_dept_no" property="deptNo"/>
+        <result column="t_dept_name" property="deptName"/>
+        <result column="t_dept_location" property="deptLocation"/>
+        <result column="t_dept_manager" property="manager"/>
+    </resultMap>
+
+    <resultMap id="deptOneMap" type="com.ityuan.pojo.Dept">
+        <result column="t_dept_no" property="deptNo"/>
+        <result column="t_dept_name" property="deptName"/>
+        <result column="t_dept_location" property="deptLocation"/>
+        <result column="t_dept_manager" property="manager"/>
+        <result column="t_create_time" property="createTime"/>
+    </resultMap>
+
+<select id="findAllDept" resultMap="deptMap">
+    select * from t_dept
+</select>
+
+    <delete id="delDept" parameterType="integer">
+        delete from t_dept where t_dept_no = #{obj}
+    </delete>
+
+    <select id="findOneDept" parameterType="String" resultMap="deptOneMap">
+        select * from t_dept where t_dept_no = #{deptNo}
+    </select>
+
+    <select id="finddetailedOneDept" parameterType="String" resultMap="deptOneMap">
+        select * from t_dept where t_dept_no = #{deptNo}
+    </select>
+
+    <insert id="insertNewDept" parameterType="com.ityuan.pojo.Dept">
+        insert into t_dept(t_dept_no,t_dept_name,t_dept_location,t_dept_manager,t_create_time)
+        values (#{deptNo},#{deptName},#{deptLocation},#{manager},#{createTime})
+    </insert>
+
+    <update id="changeDept" parameterType="com.ityuan.pojo.Dept">
+        update t_dept
+        set t_dept_name =#{deptName},
+            t_dept_location =#{deptLocation},
+            t_dept_manager =#{manager},
+            t_create_time =#{createTime}
+        where t_dept_no = #{deptNo}
+    </update>
+
+    <select id="selectOneEmployee" parameterType="String" resultType="com.ityuan.pojo.Employee">
+        select * from t_employee where t_emp_dept = #{deptName}
+    </select>
+
+</mapper>

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.UserRoleMapper">
+
+    <resultMap id="userMap" type="com.ityuan.pojo.User">
+        <id column="" property="id"/>
+        <result column="t_user_account" property="userAccount"/>
+        <result column="t_user_pwd" property="userPwd"/>
+        <result column="t_emp_no" property="empNo"/>
+        <result column="t_emp_name" property="empName"/>
+        <result column="t_role_id" property="roleID"/>
+        <result column="t_role_name" property="role"/>
+        <result column="t_user_status" property="statusID"/>
+        <result column="t_config_page_value" property="status"/>
+        <result column="t_create_time" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="configMap" type="com.ityuan.pojo.Config">
+        <id column="id" property="id"/>
+        <result column="t_config_type" property="configType"/>
+        <result column="t_config_key" property="configKey"/>
+        <result column="t_config_page_value" property="configValue"/>
+        <result column="t_create_time" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="userRoleMap" type="com.ityuan.pojo.Role">
+        <id column="id" property="id"/>
+        <result column="t_role_name" property="t_role_name"/>
+        <result column="t_create_time" property="t_create_time"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="userMap">
+        select * from t_user tu ,t_role tr, t_sys_config tsc where tu.t_role_id = tr.id and tu.t_user_status = tsc.t_config_key
+    </select>
+
+    <delete id="del" parameterType="String">
+        delete from t_user tu where t_user_account = #{userAccount}
+    </delete>
+
+    <select id="findNewOne" parameterType="String" resultMap="userMap">
+        select * from t_user tu ,t_role tr, t_sys_config tsc
+        where tu.t_role_id = tr.id
+          and tu.t_user_status = tsc.t_config_key
+          and t_user_account = #{userAccount}
+    </select>
+
+    <select id="findUserConfig" resultMap="configMap">
+        select * from t_sys_config where t_config_type = 'user_status';
+    </select>
+
+    <select id="findUserRole" resultMap="userRoleMap">
+        select * from t_role
+    </select>
+
+    <select id="selectUser" resultMap="userMap" parameterType="com.ityuan.pojo.User">
+        select * from t_user tu ,t_role tr, t_sys_config tsc
+        <where>
+            and tu.t_role_id = tr.id and tu.t_user_status = tsc.t_config_key
+            <if test="userAccount != ''">
+            and t_user_account = #{userAccount}
+            </if>
+            <if test="status != '' and status != '请选择'">
+            and t_config_page_value = #{status}
+            </if>
+            <if test="role != '' and role != '请选择'">
+            and t_role_name = #{role}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectEmployee" parameterType="String" resultType="com.ityuan.pojo.Employee">
+        select * from t_employee where  t_emp_no = #{empNo} and t_emp_name = #{empName}
+    </select>
+
+    <select id="findRoleId" parameterType="String" resultMap="userRoleMap">
+        select * from t_role where t_role_name = #{role}
+    </select>
+
+    <select id="findstatusIDId" parameterType="String" resultMap="configMap">
+        select * from t_sys_config where t_config_type = 'user_status' and t_config_page_value = #{status}
+    </select>
+
+    <insert id="add" parameterType="com.ityuan.pojo.User">
+        insert into t_user
+            (t_user_account,t_user_pwd,t_emp_no,t_emp_name,t_role_id,t_user_status,t_create_time)
+        values (#{userAccount},#{userPwd},#{empNo},#{empName},#{roleID},#{statusID},#{createTime})
+    </insert>
+
+    <select id="checkUser" parameterType="String" resultMap="userMap">
+        select * from t_user where t_user_account = #{userAccount} and t_user_pwd = #{userpwd}
+    </select>
+
+    <update id="updatePwd" parameterType="String">
+        update t_user
+        set t_user_pwd = #{checkPwd}
+        where t_user_account = #{userAccount}
+    </update>
+
+    <update id="changeUser" parameterType="com.ityuan.pojo.User">
+        update t_user
+        set t_emp_no = #{empNo} , t_emp_name = #{empName} , t_role_id = #{roleID} , t_user_status = #{statusID}
+        where t_user_account = #{userAccount}
+    </update>
+</mapper>

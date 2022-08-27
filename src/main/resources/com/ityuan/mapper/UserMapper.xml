@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.UserMapper">
+
+    <resultMap id="userMap" type="com.ityuan.pojo.User">
+        <id column="id" property="id"/>
+        <result column="t_user_account" property="userAccount"/>
+        <result column="t_role_id" property="roleID"/>
+    </resultMap>
+
+
+    <resultMap id="menuMap" type="com.ityuan.pojo.Menu">
+        <id column="id" property="id"/>
+        <result column="t_menu_name" property="t_menu_name"/>
+        <result column="t_href_url" property="t_href_url"/>
+        <result column="t_parent_id" property="t_parent_id"/>
+        <collection property="sonList" javaType="list">
+            <result column="id" property="id"/>
+            <result column="t_menu_name" property="t_menu_name"/>
+            <result column="t_href_url" property="t_href_url"/>
+            <result column="t_parent_id" property="t_parent_id"/>
+        </collection>
+    </resultMap>
+    <!--登录-->
+    <select id="login" resultMap="userMap" parameterType="String">
+        select * from t_user where t_user_account = #{userName} and t_user_pwd = #{password}
+    </select>
+
+<!--    <select id="loginByUsername" resultType="users" parameterType="String">-->
+<!--        select * from t_user where t_user_account = #{userName}-->
+<!--    </select>-->
+
+<!--    <select id="loginByPassword" resultType="users" parameterType="String">-->
+<!--        select * from t_user where t_user_pwd = #{password}-->
+<!--    </select>-->
+
+    <select id="findAllMenu" resultMap="menuMap" parameterType="int">
+        select id,t_menu_name,t_href_url,t_parent_id from t_menu tm
+        <where>
+            tm.id in (select t_menu_id from t_permissions where t_role_id = #{roleId})
+            <if test="#{parentID}=0">
+                and tm.t_parent_id = 0;
+            </if>
+            <if test="#{parentID}!=0">
+                and tm.t_parent_id = #{parentID};
+            </if>
+        </where>
+    </select>
+
+</mapper>

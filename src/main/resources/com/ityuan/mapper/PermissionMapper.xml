@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.PermissionMapper">
+
+    <resultMap id="permissionMap" type="com.ityuan.pojo.Permissions">
+        <id column="tpid" property="id"/>
+        <result column="t_role_id" property="roleID"/>
+        <result column="t_role_name" property="role"/>
+        <result column="t_menu_id" property="menuID"/>
+        <result column="t_menu_name" property="menu"/>
+        <result column="tptt" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="menuMap" type="com.ityuan.pojo.Menu">
+        <id column="id" property="id"/>
+        <result column="t_menu_name" property="t_menu_name"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="permissionMap">
+        select tr.id trid,tr.t_role_name ,tp.id tpid,t_role_id,t_menu_id,tp.t_create_time tptt,tm.id tmid,t_menu_name
+        from t_role tr,t_permissions tp, t_menu tm where tr.id =tp.t_role_id and tp.t_menu_id = tm.id
+    </select>
+
+    <select id="findMenu" resultMap="menuMap">
+        select * from t_menu
+    </select>
+
+    <select id="findRoleId" parameterType="String" resultType="com.ityuan.pojo.Role">
+        select * from t_role where t_role_name = #{role}
+    </select>
+
+    <select id="findMenuId" parameterType="String" resultType="com.ityuan.pojo.Menu">
+        select * from t_menu where t_menu_name = #{menu}
+    </select>
+
+    <insert id="add" parameterType="com.ityuan.pojo.Permissions">
+        insert into t_permissions(t_role_id,t_menu_id,t_create_time)
+        values (#{roleID},#{menuID},#{createTime})
+    </insert>
+
+    <select id="findPermission" parameterType="int" resultType="com.ityuan.pojo.Permissions">
+        select * from  t_permissions where t_role_id = #{role1Id} and t_menu_id = #{menu1Id}
+    </select>
+
+    <select id="findOne" resultMap="permissionMap" parameterType="String">
+        select tr.id trid,tr.t_role_name ,tp.id tpid,t_role_id,t_menu_id,tp.t_create_time tptt,tm.id tmid,t_menu_name
+        from t_role tr,t_permissions tp, t_menu tm
+        <where>
+           and tr.id =tp.t_role_id and tp.t_menu_id = tm.id
+            <if test="role != '' and role != '请选择'">
+                and t_role_name = #{role}
+            </if>
+            <if test="menu != '' and menu != '请选择'">
+                and t_menu_name = #{menu}
+            </if>
+        </where>
+    </select>
+
+        <select id="findNewOne" resultMap="permissionMap" parameterType="int">
+            select tr.id trid,tr.t_role_name ,tp.id tpid,t_role_id,t_menu_id,tp.t_create_time tptt,tm.id tmid,t_menu_name
+            from t_role tr,t_permissions tp, t_menu tm
+            where tr.id =tp.t_role_id
+              and tp.t_menu_id = tm.id
+              and tp.id = #{permissionId}
+    </select>
+
+    <delete id="del" parameterType="int">
+        delete from t_permissions where id = #{permissionId}
+    </delete>
+
+    <update id="changePermission" parameterType="com.ityuan.pojo.Permissions">
+        update t_permissions
+        set t_role_name = #{t_role_name}
+        where id = #{id}
+    </update>
+
+<!--    <insert id="add" parameterType="roles">-->
+<!--        insert into t_role(t_role_name,t_create_time)-->
+<!--        values (#{t_role_name},#{t_create_time})-->
+<!--    </insert>-->
+
+<!--    <select id="findRole" resultType="roles" parameterType="String">-->
+<!--        select * from t_role where id = #{roleId}-->
+<!--    </select>-->
+
+<!--    <update id="change" parameterType="roles">-->
+<!--        update t_role-->
+<!--           set t_role_name = #{t_role_name}-->
+<!--         where id = #{id}-->
+<!--    </update>-->
+</mapper>

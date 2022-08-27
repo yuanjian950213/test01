@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.DispatchMapper">
+
+<resultMap id="dispatchMap" type="com.ityuan.pojo.Dispatch">
+    <id column="id" property="id"/>
+    <result column="t_dispatch_no" property="dispatchNo"/>
+    <result column="t_dispatch_user" property="dispatchUser"/>
+    <result column="t_config_page_value" property="dispatchType"/>
+    <result column="t_dispatch_details" property="dispatchDetails"/>
+    <result column="t_dispatch_money" property="dispatchMoney"/>
+    <result column="t_dispatch_stime" property="dispatchStime"/>
+    <result column="t_dispatch_status" property="dispatchStatus"/>
+    <result column="t_dispatch_ctime" property="dispatchCtime"/>
+</resultMap>
+
+    <resultMap id="configsdispatchMap" type="com.ityuan.pojo.Dispatch">
+        <result column="t_config_page_value" property="dispatchStatus"/>
+    </resultMap>
+
+    <resultMap id="configsdMap" type="com.ityuan.pojo.Config">
+        <result column="t_config_page_value" property="configValue"/>
+    </resultMap>
+
+    <resultMap id="newconfigsdMap" type="com.ityuan.pojo.Config">
+        <result column="t_config_key" property="configValue"/>
+    </resultMap>
+
+    <select id="findallDispatch" resultMap="dispatchMap">
+        select * from t_sys_config ,t_dispatch where t_config_key = t_dispatch_type;
+    </select>
+
+    <select id="findAllDispatchType" parameterType="String" resultMap="configsdispatchMap">
+        select * from t_sys_config tsc ,t_dispatch
+        where  t_config_key = t_dispatch_status
+          and tsc.t_config_key = #{dispatchStatus}
+    </select>
+
+    <select id="findConfigdispatchtype" resultMap="configsdMap">
+        select * from t_sys_config where t_config_type = 'dispatch_type';
+    </select>
+
+    <select id="findConfigdispatchStatus" resultMap="configsdMap">
+        select * from t_sys_config where t_config_type = 'status';
+    </select>
+
+
+    <insert id="adddispatch" parameterType="com.ityuan.pojo.Dispatch">
+        insert into t_dispatch(t_dispatch_no,t_dispatch_user,t_dispatch_type,t_dispatch_details,t_dispatch_money,t_dispatch_stime,t_dispatch_status,t_dispatch_ctime)
+        values (#{dispatchNo},#{dispatchUser},#{dispatchType},#{dispatchDetails},#{dispatchMoney},#{dispatchStime},#{dispatchStatus},#{dispatchCtime})
+    </insert>
+
+
+    <delete id="del" parameterType="String">
+        delete from t_dispatch where t_dispatch_no = #{obj}
+    </delete>
+
+    <select id="findNewOne" parameterType="String" resultMap="dispatchMap">
+        select * from t_sys_config ,t_dispatch where t_config_key = t_dispatch_type and t_dispatch_no = #{dispatch}
+    </select>
+
+    <select id="findConfigType" resultMap="newconfigsdMap" parameterType="String">
+        select * from t_sys_config  where t_config_page_value = #{dispatchType} and t_config_type = 'dispatch_type';
+    </select>
+
+    <select id="findConfigStatus" resultMap="newconfigsdMap" parameterType="String">
+        select * from t_sys_config  where t_config_page_value = #{dispatchStatus} and t_config_type = 'status';
+    </select>
+
+    <update id="change" parameterType="com.ityuan.pojo.Dispatch">
+        update t_dispatch
+        set t_dispatch_type = #{dispatchType},
+            t_dispatch_details = #{dispatchDetails},
+            t_dispatch_money = #{dispatchMoney},
+            t_dispatch_status = #{dispatchStatus}
+        where t_dispatch_no = #{dispatchNo}
+    </update>
+
+    <select id="findOne" resultMap="dispatchMap" parameterType="String">
+        select * from t_sys_config ,t_dispatch
+        <where>
+            and t_config_key = t_dispatch_type
+            <if test="dispatchType != '' and dispatchType != '请选择类型'">
+                and t_config_page_value = #{dispatchType}
+            </if>
+            <if test="dispatchStatus != '' and dispatchStatus != '请选择状态'">
+                and t_dispatch_status = #{dispatchStatus}
+            </if>
+        </where>
+    </select>
+</mapper>

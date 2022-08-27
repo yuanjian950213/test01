@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    druid:
+     driver-class-name: com.mysql.cj.jdbc.Driver
+     url: jdbc:mysql://localhost:3306/yuanjian
+     username: root
+     password: 19950213
+  mvc:
+    view:
+      prefix: /
+      suffix: .jsp
+
+server:
+  servlet:
+    context-path: /wangbo

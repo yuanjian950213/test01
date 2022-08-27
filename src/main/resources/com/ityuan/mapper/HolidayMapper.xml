@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ityuan.mapper.HolidayMapper">
+
+    <resultMap id="holidayMap" type="com.ityuan.pojo.Holiday">
+        <id column="id" property="id"/>
+        <result column="t_holiday_no" property="holidayNo"/>
+        <result column="t_holiday_user" property="holidayUser"/>
+        <result column="t_config_page_value" property="holidayType"/>
+        <result column="t_holiday_bz" property="holidayBz"/>
+        <result column="t_start_time" property="startTime"/>
+        <result column="t_end_time" property="endTime"/>
+        <result column="t_holiday_status" property="holidayStatus"/>
+        <result column="t_create_time" property="createTime"/>
+    </resultMap>
+
+    <resultMap id="configsMap" type="com.ityuan.pojo.Config">
+        <id column="id" property="id"/>
+        <result column="t_config_type" property="configType"/>
+        <result column="t_config_key" property="configKey"/>
+        <result column="t_config_page_value" property="configValue"/>
+        <result column="t_create_time" property="createTime"/>
+    </resultMap>
+
+
+    <select id="findallholiday" resultMap="holidayMap">
+        select * from t_holiday td , t_sys_config tsc where  tsc.t_config_key = td.t_holiday_type;
+    </select>
+
+    <select id="findAllHolidayType" resultMap="configsMap">
+        select * from t_sys_config where t_config_type = 'holiday_type';
+    </select>
+
+    <insert id="addHoliday" parameterType="com.ityuan.pojo.Holiday">
+        insert into t_holiday(t_holiday_no,t_holiday_user,t_holiday_type,t_holiday_bz,t_start_time,t_end_time,t_holiday_status,t_create_time)
+        values (#{holidayNo},#{holidayUser},#{holidayType},#{holidayBz},#{startTime},#{endTime},#{holidayStatus},#{createTime})
+    </insert>
+
+    <select id="findOneHoliday" resultType="String" parameterType="String">
+        select t_config_key from t_sys_config where t_config_page_value = #{holidayType}
+    </select>
+
+    <delete id="del" parameterType="String">
+        delete from t_holiday where t_holiday_no = #{obj}
+    </delete>
+
+    <select id="findNewOne" parameterType="String" resultMap="holidayMap">
+        select * from t_holiday td , t_sys_config tsc where  tsc.t_config_key = td.t_holiday_type and td.t_holiday_no = #{holidayNo}
+    </select>
+
+    <select id="findholidayValue" resultType="String" parameterType="String">
+        select t_config_key from t_sys_config where t_config_page_value = #{holidayType}
+    </select>
+
+    <update id="change" parameterType="com.ityuan.pojo.Holiday">
+        update t_holiday
+        set t_holiday_type = #{holidayType},
+            t_holiday_bz = #{holidayBz},
+            t_start_time = #{startTime},
+            t_end_time = #{endTime}
+        where t_holiday_no = #{holidayNo}
+    </update>
+
+    <select id="findOne" resultMap="holidayMap" parameterType="String">
+        select * from t_holiday td , t_sys_config tsc
+        <where>
+                and tsc.t_config_key = td.t_holiday_type
+
+            <if test="holidayUser != ''">
+                and t_holiday_user like '%${holidayUser}%'
+            </if>
+
+            <if test="holidayType != '' and holidayType != '请选择'">
+                and t_config_page_value = #{holidayType}
+            </if>
+
+            <if test="holidayStatus != '' and holidayStatus != '请选择'">
+                and t_holiday_status = #{holidayStatus}
+            </if>
+        </where>
+    </select>
+
+    <select id="findAllHolidayStatus" resultMap="configsMap">
+        select * from t_sys_config where t_config_type = 'holiday_status';
+    </select>
+</mapper>
